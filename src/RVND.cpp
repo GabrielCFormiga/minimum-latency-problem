@@ -3,10 +3,10 @@
 void MLP::RVND(Solution &solution) {
     std::vector<MLP::Neighborhood> neighborhoods = {
         MLP::Neighborhood::SWAP,
-        MLP::Neighborhood::_2_OPT,
-        MLP::Neighborhood::REINSERTION, 
-        MLP::Neighborhood::OR_OPT_2, 
-        MLP::Neighborhood::OR_OPT_3
+        // MLP::Neighborhood::_2_OPT,
+        // MLP::Neighborhood::REINSERTION, 
+        // MLP::Neighborhood::OR_OPT_2, 
+        // MLP::Neighborhood::OR_OPT_3
     };
 
     bool improved;
@@ -37,10 +37,10 @@ void MLP::RVND(Solution &solution) {
         if (improved) {
             neighborhoods = {
                 MLP::Neighborhood::SWAP,
-                MLP::Neighborhood::_2_OPT,
-                MLP::Neighborhood::REINSERTION,
-                MLP::Neighborhood::OR_OPT_2,
-                MLP::Neighborhood::OR_OPT_3
+                // MLP::Neighborhood::_2_OPT,
+                // MLP::Neighborhood::REINSERTION,
+                // MLP::Neighborhood::OR_OPT_2,
+                // MLP::Neighborhood::OR_OPT_3
             };
         } else {
             neighborhoods.erase(neighborhoods.begin() + neighborhood);

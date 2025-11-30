@@ -35,6 +35,7 @@ Solution MLP::randomized(double alpha) {
     solution.sequence.push_back(1);
     prefix += m_instance.get_distance(prev, 1);
     solution.objective += prefix;
+    update_all_subsequences(solution);
 
     assert(solution.test_feasibility(m_instance));
     

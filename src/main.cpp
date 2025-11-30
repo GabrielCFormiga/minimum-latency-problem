@@ -37,8 +37,7 @@ int main(int argc, char **argv) {
 
     MLP MLP(instance, seed);
 
-    Solution s = MLP.randomized(0.3);
-    // Solution s = MLP.GILS_RVND(max_iterations, max_ils_iterations);
+    Solution s = MLP.GILS_RVND(max_iterations, max_ils_iterations);
 
     // Display solution
     std::cout << std::string(40, '=') << '\n';

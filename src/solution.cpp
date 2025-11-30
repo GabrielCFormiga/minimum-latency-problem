@@ -4,6 +4,7 @@
 
 Solution::Solution(const Instance &instance) {
     sequence.reserve(instance.get_dimension() + 1);
+    subseq_matrix.resize(instance.get_dimension() + 1, std::vector<Subsequence>(instance.get_dimension() + 1));
     objective = 0.0;
 }
 
@@ -18,7 +19,7 @@ bool Solution::test_feasibility(const Instance &instance) {
         return false;
     }
 
-    if (sequence[0] != 1 || sequence[sequence.size() - 1] != 1) return false;
+    if (sequence[0] != sequence[sequence.size() - 1]) return false;
 
     double new_objective = 0;
     double prefix = 0.0;

@@ -25,7 +25,7 @@ Solution MLP::GILS_RVND(const size_t max_iterations, const size_t max_ils_iterat
             }
 
             s = local_best;
-            double_bridge(s);
+            // double_bridge(s);
             ++ils_iterations;
         }
     }

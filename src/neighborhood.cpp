@@ -2,36 +2,76 @@
 
 #include <algorithm>
 
-// Always has sequence[0] == sequence.back() == 1
-
 bool MLP::best_improvement_swap(Solution &solution) {
     double best_delta = 0.0;
     size_t best_i = 0, best_j = 0;
 
+    // New leader swaps
+    for (size_t j = 1; j < solution.sequence.size() - 1; ++j) {
+        double delta = 0.0;
+
+        if (j == 1) {
+            // Remove edges
+            delta -= m_instance.get_distance(solution.sequence[solution.sequence.size() - 2], solution.sequence[solution.sequence.size() - 1]);
+            delta -= m_instance.get_distance(solution.sequence[j], solution.sequence[j + 1]) * (solution.sequence.size() - (j + 1));
+        
+            // Add edges
+            delta += m_instance.get_distance(solution.sequence[0], solution.sequence[j + 1]) * (solution.sequence.size() - (j + 1));
+            delta += m_instance.get_distance(solution.sequence[solution.sequence.size() - 2], solution.sequence[j]);
+        } else if (j == solution.sequence.size() - 2) {
+            // Remove edges
+            delta -= m_instance.get_distance(solution.sequence[0], solution.sequence[1]) * (solution.sequence.size() - 1);
+            delta -= m_instance.get_distance(solution.sequence[j - 1], solution.sequence[j]) * (solution.sequence.size() - j);
+        
+            // Add edges
+            delta += m_instance.get_distance(solution.sequence[j], solution.sequence[1]) * (solution.sequence.size() - 1);
+            delta += m_instance.get_distance(solution.sequence[j - 1], solution.sequence[0]) * (solution.sequence.size() - j);
+        } else {
+            // Remove edges
+            delta -= m_instance.get_distance(solution.sequence[0], solution.sequence[1]) * (solution.sequence.size() - 1);
+            delta -= m_instance.get_distance(solution.sequence[j - 1], solution.sequence[j]) * (solution.sequence.size() - j);
+            delta -= m_instance.get_distance(solution.sequence[j], solution.sequence[j + 1]) * (solution.sequence.size() - (j + 1));
+            delta -= m_instance.get_distance(solution.sequence[solution.sequence.size() - 2], solution.sequence[solution.sequence.size() - 1]); 
+
+            // Add edges
+            delta += m_instance.get_distance(solution.sequence[j], solution.sequence[1]) * (solution.sequence.size() - 1);
+            delta += m_instance.get_distance(solution.sequence[j - 1], solution.sequence[0]) * (solution.sequence.size() - j);
+            delta += m_instance.get_distance(solution.sequence[0], solution.sequence[j + 1]) * (solution.sequence.size() - (j + 1));
+            delta += m_instance.get_distance(solution.sequence[solution.sequence.size() - 2], solution.sequence[j]);
+        }
+
+        if (delta + EPS < best_delta) {
+            best_delta = delta;
+            best_i = 0;
+            best_j = j;
+        }
+    }
+
+    // Other swaps
     for (size_t i = 1; i < solution.sequence.size() - 2; ++i) {
         for (size_t j = i + 1; j < solution.sequence.size() - 1; ++j) {
             double delta = 0;
 
             if (j == i + 1) {
                 // Remove edges
-                delta -= m_instance.get_distance(solution.sequence[i - 1], solution.sequence[i]);
-                delta -= m_instance.get_distance(solution.sequence[j], solution.sequence[j + 1]);
+                delta -= m_instance.get_distance(solution.sequence[i - 1], solution.sequence[i]) * (solution.sequence.size() - i);
+                delta -= m_instance.get_distance(solution.sequence[j], solution.sequence[j + 1]) * (solution.sequence.size() - (j + 1));
 
                 // Add edges
-                delta += m_instance.get_distance(solution.sequence[i - 1], solution.sequence[j]);
-                delta += m_instance.get_distance(solution.sequence[i], solution.sequence[j + 1]);
+                delta += m_instance.get_distance(solution.sequence[i - 1], solution.sequence[j]) * (solution.sequence.size() - i);
+                delta += m_instance.get_distance(solution.sequence[i], solution.sequence[j + 1]) * (solution.sequence.size() - (j + 1));
             } else {
                 // Remove edges
-                delta -= m_instance.get_distance(solution.sequence[i - 1], solution.sequence[i]);
-                delta -= m_instance.get_distance(solution.sequence[i], solution.sequence[i + 1]);
-                delta -= m_instance.get_distance(solution.sequence[j - 1], solution.sequence[j]);
-                delta -= m_instance.get_distance(solution.sequence[j], solution.sequence[j + 1]);
+                delta -= m_instance.get_distance(solution.sequence[i - 1], solution.sequence[i]) * (solution.sequence.size() - i);
+                delta -= m_instance.get_distance(solution.sequence[i], solution.sequence[i + 1]) * (solution.sequence.size() - (i + 1));
+                delta -= m_instance.get_distance(solution.sequence[j - 1], solution.sequence[j]) * (solution.sequence.size() - j);
+                delta -= m_instance.get_distance(solution.sequence[j], solution.sequence[j + 1]) * (solution.sequence.size() - (j + 1));
 
                 // Add edges
-                delta += m_instance.get_distance(solution.sequence[i - 1], solution.sequence[j]);
-                delta += m_instance.get_distance(solution.sequence[j], solution.sequence[i + 1]);
-                delta += m_instance.get_distance(solution.sequence[j - 1], solution.sequence[i]);
-                delta += m_instance.get_distance(solution.sequence[i], solution.sequence[j + 1]);
+                delta += m_instance.get_distance(solution.sequence[i - 1], solution.sequence[j]) * (solution.sequence.size() - i);
+                delta += m_instance.get_distance(solution.sequence[j], solution.sequence[i + 1]) * (solution.sequence.size() - (i + 1));
+                delta += m_instance.get_distance(solution.sequence[j - 1], solution.sequence[i]) * (solution.sequence.size() - j);
+                delta += m_instance.get_distance(solution.sequence[i], solution.sequence[j + 1]) * (solution.sequence.size() - (j + 1));
             }
 
             if (delta + EPS < best_delta) {
@@ -43,6 +83,9 @@ bool MLP::best_improvement_swap(Solution &solution) {
     }
 
     if (best_delta + EPS < 0) {
+        if (best_i == 0) {
+            solution.sequence[solution.sequence.size() - 1] = solution.sequence[best_j];
+        }
         std::swap(solution.sequence[best_i], solution.sequence[best_j]);
         solution.objective += best_delta;
         assert(solution.test_feasibility(m_instance));

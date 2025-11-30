@@ -4,10 +4,13 @@
 #include <vector>
 
 #include "instance.hpp"
+#include "subsequence.hpp"
 
 struct Solution {
     std::vector<size_t> sequence;
   
+    std::vector<std::vector<Subsequence>> subseq_matrix;
+
     double objective;
 
     Solution() = default;

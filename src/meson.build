@@ -8,6 +8,7 @@ sources = files(
   'GILS.cpp',
   'neighborhood.cpp',
   'perturbation.cpp',
+  'subsequence.cpp',
 )
 
 incdir = include_directories('../include')

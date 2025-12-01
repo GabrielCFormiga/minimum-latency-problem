@@ -18,6 +18,8 @@ struct Solution {
 
     bool test_feasibility(const Instance &instance);
   
+    void print_subsequence_matrix() const;
+
     void print_sequence() const;
 };
 

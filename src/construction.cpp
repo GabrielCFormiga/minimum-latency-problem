@@ -38,6 +38,7 @@ Solution MLP::randomized(double alpha) {
     update_all_subsequences(solution);
 
     assert(solution.test_feasibility(m_instance));
+    assert(test_subsequences_feasibility(solution));
     
     return solution;
 }

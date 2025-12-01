@@ -39,7 +39,8 @@ class MLP {
 
         // Subsequences management
         void update_all_subsequences(Solution &solution);
-
+        void update_interval_subsequences(Solution &solution, size_t l, size_t r);
+        bool test_subsequences_feasibility(const Solution &solution);
         Subsequence concatenate_subsequences(const Subsequence &a, const Subsequence &b);
 };
 

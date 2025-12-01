@@ -42,7 +42,7 @@ int main(int argc, char **argv) {
     // Display solution
     std::cout << std::string(40, '=') << '\n';
     std::cout << "Solution:" << '\n';   
-    std::cout << "Objective: " << s.objective << '\n';
+    std::cout << "Objective: " << std::fixed << std::setprecision(2) << s.objective << '\n';
     std::cout << "Sequence: " << '\n';
     s.print_sequence();
     std::cout << std::string(40, '=') << '\n';

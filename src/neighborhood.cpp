@@ -6,6 +6,7 @@ bool MLP::best_improvement_swap(Solution &solution) {
     double best_delta = 0.0;
     size_t best_i = 0, best_j = 0;
 
+    /* Only for MLP with variable deposit/leader position 
     // New leader swaps
     for (size_t j = 1; j < solution.sequence.size() - 1; ++j) {
         double delta = 0.0;
@@ -45,7 +46,7 @@ bool MLP::best_improvement_swap(Solution &solution) {
             best_i = 0;
             best_j = j;
         }
-    }
+    } */
 
     // Other swaps
     for (size_t i = 1; i < solution.sequence.size() - 2; ++i) {
@@ -83,12 +84,15 @@ bool MLP::best_improvement_swap(Solution &solution) {
     }
 
     if (best_delta + EPS < 0) {
+        /* Only for MLP with variable deposit/leader position 
         if (best_i == 0) {
             solution.sequence[solution.sequence.size() - 1] = solution.sequence[best_j];
-        }
+        } */
         std::swap(solution.sequence[best_i], solution.sequence[best_j]);
         solution.objective += best_delta;
+        update_interval_subsequences(solution, best_i, best_j);
         assert(solution.test_feasibility(m_instance));
+        assert(test_subsequences_feasibility(solution));
     }
 
     return best_delta + EPS < 0;
@@ -100,15 +104,10 @@ bool MLP::best_improvement_2_opt(Solution &solution) {
 
     for (size_t i = 1; i < solution.sequence.size() - 3; ++i) {
         for (size_t j = i + 2; j < solution.sequence.size() - 1; ++j) {
-            double delta = 0;
+            Subsequence new_sequence = concatenate_subsequences(solution.subseq_matrix[0][i - 1], solution.subseq_matrix[j][i]);
+            new_sequence = concatenate_subsequences(new_sequence, solution.subseq_matrix[j + 1][solution.sequence.size() - 1]);
 
-            // Remove edges
-            delta -= m_instance.get_distance(solution.sequence[i - 1], solution.sequence[i]);
-            delta -= m_instance.get_distance(solution.sequence[j], solution.sequence[j + 1]);
-
-            // Add edges
-            delta += m_instance.get_distance(solution.sequence[i - 1], solution.sequence[j]);
-            delta += m_instance.get_distance(solution.sequence[i], solution.sequence[j + 1]);
+            double delta = new_sequence.acumulated_cost - solution.objective;
 
             if (delta + EPS < best_delta) {
                 best_delta = delta;
@@ -121,6 +120,7 @@ bool MLP::best_improvement_2_opt(Solution &solution) {
     if (best_delta + EPS < 0) {
         reverse(solution.sequence.begin() + best_i, solution.sequence.begin() + best_j + 1);
         solution.objective += best_delta;
+        update_all_subsequences(solution); // placeholde for more efficient update
         assert(solution.test_feasibility(m_instance));
     }
 

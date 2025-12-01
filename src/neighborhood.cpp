@@ -104,8 +104,14 @@ bool MLP::best_improvement_2_opt(Solution &solution) {
 
     for (size_t i = 1; i < solution.sequence.size() - 3; ++i) {
         for (size_t j = i + 2; j < solution.sequence.size() - 1; ++j) {
-            Subsequence new_sequence = concatenate_subsequences(solution.subseq_matrix[0][i - 1], solution.subseq_matrix[j][i]);
-            new_sequence = concatenate_subsequences(new_sequence, solution.subseq_matrix[j + 1][solution.sequence.size() - 1]);
+            Subsequence new_sequence = concatenate_subsequences(
+                solution.subseq_matrix[0][i - 1], 
+                solution.subseq_matrix[j][i]
+            );
+            new_sequence = concatenate_subsequences(
+                new_sequence, 
+                solution.subseq_matrix[j + 1][solution.sequence.size() - 1]
+            );
 
             double delta = new_sequence.acumulated_cost - solution.objective;
 
@@ -120,8 +126,9 @@ bool MLP::best_improvement_2_opt(Solution &solution) {
     if (best_delta + EPS < 0) {
         reverse(solution.sequence.begin() + best_i, solution.sequence.begin() + best_j + 1);
         solution.objective += best_delta;
-        update_all_subsequences(solution); // placeholde for more efficient update
+        update_interval_subsequences(solution, best_i, best_j);
         assert(solution.test_feasibility(m_instance));
+        assert(test_subsequences_feasibility(solution));
     }
 
     return best_delta + EPS < 0;
@@ -135,17 +142,43 @@ bool MLP::best_improvement_or_opt(Solution &solution, size_t segment_size) {
         for (size_t j = 1; j < solution.sequence.size(); ++j) {
             if (j >= i && j <= i + segment_size) continue;
 
-            double delta = 0;
+            double delta = 0.0;
 
-            // Remove edges
-            delta -= m_instance.get_distance(solution.sequence[i - 1], solution.sequence[i]);
-            delta -= m_instance.get_distance(solution.sequence[i + segment_size - 1], solution.sequence[i + segment_size]);
-            delta -= m_instance.get_distance(solution.sequence[j - 1], solution.sequence[j]);
+            if (j < i) {
+                Subsequence new_sequence = concatenate_subsequences(
+                    solution.subseq_matrix[0][j - 1],
+                    solution.subseq_matrix[i][i + segment_size - 1]
+                );
+    
+                new_sequence = concatenate_subsequences(
+                    new_sequence,
+                    solution.subseq_matrix[j][i - 1]
+                );
 
-            // Add edges
-            delta += m_instance.get_distance(solution.sequence[i - 1], solution.sequence[i + segment_size]);
-            delta += m_instance.get_distance(solution.sequence[j - 1], solution.sequence[i]);
-            delta += m_instance.get_distance(solution.sequence[i + segment_size - 1], solution.sequence[j]);
+                new_sequence = concatenate_subsequences(
+                    new_sequence,
+                    solution.subseq_matrix[i + segment_size][solution.sequence.size() - 1]
+                );
+
+                delta = new_sequence.acumulated_cost - solution.objective;
+            } else {
+                Subsequence new_sequence = concatenate_subsequences(
+                    solution.subseq_matrix[0][i - 1],
+                    solution.subseq_matrix[i + segment_size][j - 1]
+                );
+
+                new_sequence = concatenate_subsequences(
+                    new_sequence,
+                    solution.subseq_matrix[i][i + segment_size - 1]
+                );
+
+                new_sequence = concatenate_subsequences(
+                    new_sequence,
+                    solution.subseq_matrix[j][solution.sequence.size() - 1]
+                );
+
+                delta = new_sequence.acumulated_cost - solution.objective;
+            }
 
             if (delta + EPS < best_delta) {
                 best_delta = delta;
@@ -169,7 +202,9 @@ bool MLP::best_improvement_or_opt(Solution &solution, size_t segment_size) {
         }
 
         solution.objective += best_delta;
+        update_interval_subsequences(solution, std::min(best_i, best_j), std::max(best_i + segment_size - 1, best_j));
         assert(solution.test_feasibility(m_instance));
+        assert(test_subsequences_feasibility(solution));
     }
 
     return best_delta + EPS < 0;

@@ -11,9 +11,9 @@
 
 class Instance {
 private:
-	std::string m_name; //OK
-	size_t m_dimension; //OK
-	size_t m_num_parameters;//OK
+	std::string m_name; 
+	size_t m_dimension;
+	size_t m_num_parameters;
 
 	std::shared_ptr<double*[]> distMatrix;
 	std::shared_ptr<double[]> xCoord, yCoord;
@@ -31,9 +31,9 @@ public:
 	void read();
 	void printMatrixDist();
 
-	inline size_t get_dimension() const { return m_dimension; } //OK
+	inline size_t get_dimension() const { return m_dimension; } 
 
-	inline double get_distance(size_t i, size_t j) const { return distMatrix[i-1][j-1]; } //OK
+	inline double get_distance(size_t i, size_t j) const { return distMatrix[i-1][j-1]; }
 	
 	inline double **getMatrixCost() { return distMatrix.get(); }
 	inline double getXCoord(int i){return xCoord[i-1];}

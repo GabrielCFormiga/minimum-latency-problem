@@ -21,29 +21,44 @@ void MLP::double_bridge(Solution &solution) {
     double delta = 0.0;
     
     if (first_r + 1 == second_l) {
-        // Remove edges
-        delta -= m_instance.get_distance(solution.sequence[first_l - 1], solution.sequence[first_l]);
-        delta -= m_instance.get_distance(solution.sequence[first_r], solution.sequence[second_l]);
-        delta -= m_instance.get_distance(solution.sequence[second_r], solution.sequence[second_r + 1]);
+        Subsequence new_sequence = concatenate_subsequences(
+            solution.subseq_matrix[0][first_l - 1],
+            solution.subseq_matrix[second_l][second_r]
+        ); 
 
-        // Add edges
-        delta += m_instance.get_distance(solution.sequence[first_l - 1], solution.sequence[second_l]);
-        delta += m_instance.get_distance(solution.sequence[second_r], solution.sequence[first_l]);
-        delta += m_instance.get_distance(solution.sequence[first_r], solution.sequence[second_r + 1]);
+        new_sequence = concatenate_subsequences(
+            new_sequence,
+            solution.subseq_matrix[first_l][first_r]
+        );
 
+        new_sequence = concatenate_subsequences(
+            new_sequence,
+            solution.subseq_matrix[second_r + 1][solution.sequence.size() - 1]
+        );
 
+        delta = new_sequence.acumulated_cost - solution.objective;
     } else {
-        // Remove edges
-        delta -= m_instance.get_distance(solution.sequence[first_l - 1], solution.sequence[first_l]);
-        delta -= m_instance.get_distance(solution.sequence[first_r], solution.sequence[first_r + 1]);
-        delta -= m_instance.get_distance(solution.sequence[second_l - 1], solution.sequence[second_l]);
-        delta -= m_instance.get_distance(solution.sequence[second_r], solution.sequence[second_r + 1]);
-        
-        // Add edges
-        delta += m_instance.get_distance(solution.sequence[first_l - 1], solution.sequence[second_l]);
-        delta += m_instance.get_distance(solution.sequence[second_r], solution.sequence[first_r + 1]);
-        delta += m_instance.get_distance(solution.sequence[second_l - 1], solution.sequence[first_l]);
-        delta += m_instance.get_distance(solution.sequence[first_r], solution.sequence[second_r + 1]);
+        Subsequence new_sequence = concatenate_subsequences(
+            solution.subseq_matrix[0][first_l - 1],
+            solution.subseq_matrix[second_l][second_r]
+        ); 
+
+        new_sequence = concatenate_subsequences(
+            new_sequence,
+            solution.subseq_matrix[first_r + 1][second_l - 1]
+        );
+
+        new_sequence = concatenate_subsequences(
+            new_sequence,
+            solution.subseq_matrix[first_l][first_r]
+        );
+
+        new_sequence = concatenate_subsequences(
+            new_sequence,
+            solution.subseq_matrix[second_r + 1][solution.sequence.size() - 1]
+        );
+
+        delta = new_sequence.acumulated_cost - solution.objective;
     }
     
     solution.objective += delta;
@@ -75,5 +90,7 @@ void MLP::double_bridge(Solution &solution) {
         temp.pop();
     }
 
+    update_interval_subsequences(solution, first_l, second_r);
     assert(solution.test_feasibility(m_instance));
+    assert(test_subsequences_feasibility(solution));
 }

@@ -13,7 +13,8 @@ void MLP::update_all_subsequences(Solution &solution) {
     // -> Subsequences
     for (size_t i = 0; i < solution.sequence.size() - 1; ++i) {
         for (size_t j = i + 1; j < solution.sequence.size(); ++j) {
-            solution.subseq_matrix[i][j] = concatenate_subsequences(
+            concatenate_subsequences_inplace(
+                solution.subseq_matrix[i][j],
                 solution.subseq_matrix[i][j - 1],
                 solution.subseq_matrix[j][j]
             );
@@ -23,7 +24,8 @@ void MLP::update_all_subsequences(Solution &solution) {
     // <- Subsequences
     for (size_t i = solution.sequence.size() - 1; i > 0; --i) {
         for (size_t j = i - 1; j >= 0; --j) {
-            solution.subseq_matrix[i][j] = concatenate_subsequences(
+            concatenate_subsequences_inplace(
+                solution.subseq_matrix[i][j],
                 solution.subseq_matrix[i][j + 1],
                 solution.subseq_matrix[j][j]
             );
@@ -47,7 +49,8 @@ void MLP::update_interval_subsequences(Solution &solution, size_t l, size_t r) {
     // -> Subsequences
     for (size_t i = 0; i <= r; ++i) {
         for (size_t j = std::max(l, i + 1); j < solution.sequence.size(); ++j) {
-            solution.subseq_matrix[i][j] = concatenate_subsequences(
+            concatenate_subsequences_inplace(
+                solution.subseq_matrix[i][j],
                 solution.subseq_matrix[i][j - 1],
                 solution.subseq_matrix[j][j]
             );
@@ -57,7 +60,8 @@ void MLP::update_interval_subsequences(Solution &solution, size_t l, size_t r) {
     // <- Subsequences
     for (size_t i = solution.sequence.size() - 1; i >= l; --i) {
         for (size_t j = std::min(i - 1, r); j >= 0; --j) {
-            solution.subseq_matrix[i][j] = concatenate_subsequences(
+            concatenate_subsequences_inplace(
+                solution.subseq_matrix[i][j],
                 solution.subseq_matrix[i][j + 1],
                 solution.subseq_matrix[j][j]
             );
@@ -120,4 +124,19 @@ Subsequence MLP::concatenate_subsequences(const Subsequence &a, const Subsequenc
     ret.first = a.first;
     ret.last = b.last;
     return ret;
+}
+
+void MLP::concatenate_subsequences_inplace(Subsequence &a, const Subsequence &b) {
+    a.acumulated_cost = a.acumulated_cost + b.length * (a.cost + m_instance.get_distance(a.last, b.first)) + b.acumulated_cost;
+    a.cost = a.cost + m_instance.get_distance(a.last, b.first) + b.cost;
+    a.length = a.length + b.length;
+    a.last = b.last;
+}
+
+void MLP::concatenate_subsequences_inplace(Subsequence &ret, Subsequence &a, const Subsequence &b) {
+    ret.acumulated_cost = a.acumulated_cost + b.length * (a.cost + m_instance.get_distance(a.last, b.first)) + b.acumulated_cost;
+    ret.cost = a.cost + m_instance.get_distance(a.last, b.first) + b.cost;
+    ret.length = a.length + b.length;
+    ret.first = a.first;
+    ret.last = b.last;
 }

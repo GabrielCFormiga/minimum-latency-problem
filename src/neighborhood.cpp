@@ -102,18 +102,23 @@ bool MLP::best_improvement_2_opt(Solution &solution) {
     double best_delta = 0.0;
     size_t best_i = 0, best_j = 0;
 
+    Subsequence new_sequence;
+    double delta = 0.0;
+
     for (size_t i = 1; i < solution.sequence.size() - 3; ++i) {
         for (size_t j = i + 2; j < solution.sequence.size() - 1; ++j) {
-            Subsequence new_sequence = concatenate_subsequences(
+            concatenate_subsequences_inplace(
+                new_sequence,
                 solution.subseq_matrix[0][i - 1], 
                 solution.subseq_matrix[j][i]
             );
-            new_sequence = concatenate_subsequences(
+
+            concatenate_subsequences_inplace(
                 new_sequence, 
                 solution.subseq_matrix[j + 1][solution.sequence.size() - 1]
             );
 
-            double delta = new_sequence.acumulated_cost - solution.objective;
+            delta = new_sequence.acumulated_cost - solution.objective;
 
             if (delta + EPS < best_delta) {
                 best_delta = delta;
@@ -138,41 +143,44 @@ bool MLP::best_improvement_or_opt(Solution &solution, size_t segment_size) {
     double best_delta = 0.0;
     size_t best_i = 0, best_j = 0;
 
+    Subsequence new_sequence;
+    double delta = 0.0;
+
     for (size_t i = 1; i < solution.sequence.size() - segment_size; ++i) {
         for (size_t j = 1; j < solution.sequence.size(); ++j) {
             if (j >= i && j <= i + segment_size) continue;
 
-            double delta = 0.0;
-
             if (j < i) {
-                Subsequence new_sequence = concatenate_subsequences(
+                concatenate_subsequences_inplace(
+                    new_sequence,
                     solution.subseq_matrix[0][j - 1],
                     solution.subseq_matrix[i][i + segment_size - 1]
                 );
     
-                new_sequence = concatenate_subsequences(
+                concatenate_subsequences_inplace(
                     new_sequence,
                     solution.subseq_matrix[j][i - 1]
                 );
 
-                new_sequence = concatenate_subsequences(
+                concatenate_subsequences_inplace(
                     new_sequence,
                     solution.subseq_matrix[i + segment_size][solution.sequence.size() - 1]
                 );
 
                 delta = new_sequence.acumulated_cost - solution.objective;
             } else {
-                Subsequence new_sequence = concatenate_subsequences(
+                concatenate_subsequences_inplace(
+                    new_sequence,
                     solution.subseq_matrix[0][i - 1],
                     solution.subseq_matrix[i + segment_size][j - 1]
                 );
 
-                new_sequence = concatenate_subsequences(
+                concatenate_subsequences_inplace(
                     new_sequence,
                     solution.subseq_matrix[i][i + segment_size - 1]
                 );
 
-                new_sequence = concatenate_subsequences(
+                concatenate_subsequences_inplace(
                     new_sequence,
                     solution.subseq_matrix[j][solution.sequence.size() - 1]
                 );

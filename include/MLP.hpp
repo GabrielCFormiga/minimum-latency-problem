@@ -42,6 +42,9 @@ class MLP {
         void update_interval_subsequences(Solution &solution, size_t l, size_t r);
         bool test_subsequences_feasibility(const Solution &solution);
         Subsequence concatenate_subsequences(const Subsequence &a, const Subsequence &b);
+        void concatenate_subsequences_inplace(Subsequence &a, const Subsequence &b);
+        void concatenate_subsequences_inplace(Subsequence &ret, Subsequence &a, const Subsequence &b);
+
 };
 
 #endif

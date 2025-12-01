@@ -1,70 +1,69 @@
-# C++ Meson Template
+# Minimum Latency Problem (MLP)
 
-Simple template for C++ projects with [Meson Build System](https://mesonbuild.com/). This template follows this structure:
+This repository contains a heuristic solver for the Minimum Latency Problem (MLP) implemented in C++17 and built with the Meson Build System.
 
-```
-├── .clang-format
-├── .clang-tidy
-├── .gitignore
-├── include
-├── meson.build
-├── README.md
-└── src
-    ├── main.cpp
-    └── meson.build
-```
+The solution approach combines the metaheuristics GRASP, ILS, and RVND.
 
-Here is an explanation of what is each component:
 
-- `.clang-format`: C++ code formatter;
-- `.clang-tidy`: C++ code linter;
-- `.gitignore`: Set what git must ignore (compiler generated files, build directories, ...);
-- `include/`: Directory to store the header files (`.hpp`);
-- `src/`: Directory to store the source files (`.cpp`, `.cc`, ...);
-- `src/meson.build`: Configure source files for Meson;
-- `meson`: Configure Meson;
-- `README.md`: Documentation file in markdown;
+![Results](./data/results.png)
 
-## Usage
-#### 1. [Create a repository from this template](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template);
+## TODO
 
-#### 2. Setup meson project name:
+- [x] Instance parser
+- [x] Feasibility check
+- [x] Constructive procedure
+- [x] Local search
+- [x] Perturbation
+- [x] Methaheuristic
 
-In the `meson.build`, you can change your project name to whatever you want:
+## Methaheuristics
 
-```
-project(
-    "<project_name>",
-    ...
-)
-```
+- [x] GILS (GRASP Iterated Local Search)
 
-#### 3. Setup the meson build:
+## Constructive procedure
 
-Assuming that the `build/` is the release build directory:
+- [x] Randomized Greedy Construction
+
+## Local search
+
+- [x] RVND (Randomized Variable Neighborhood Search)
+
+### Neighborhood
+
+- [x] SWAP
+- [x] 2-OPT 
+- [x] OR-OPT 
+
+### Perturbation
+
+- [x] DOUBLE-BRIDGE: 
+
+## Getting started
+
+### Prerequisites
+
+- [Meson Build System](https://mesonbuild.com/)
+- C++ 17
+
+### How to build the project
+
+1. Setup release and debug builds:
 
 ```
 meson setup build --buildtype=release
-```
-
-For debugging, setup a `build_debug/` directory:
-
-```
 meson setup build_debug --buildtype=debug
 ```
 
-#### 4. Compile and run:
-
-Compile the build:
+2. Compile build:
 
 ```
-meson compile -C <build_directory>
+meson compile -C <build or build_debug>
 ```
 
-Run the the executable:
+3. Run:
+
+From the root directory:
 
 ```
-./<build_directory>/<project_name>
+./<build or build_debug>/src/asp <instance file path>
 ```
-
-#### 5. Write a `README.md` for your project.

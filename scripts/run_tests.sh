@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Script para testar todas as instâncias TSP com menos de 600 nós
+# Script para testar todas as instâncias TSP para o MLP com menos de 110 nós
 # e salvar os resultados em um arquivo CSV
 
 # Diretório das instâncias
@@ -34,17 +34,17 @@ get_dimension() {
 count=0
 total=0
 
-# Contar total de instâncias < 600 nós
+# Contar total de instâncias < 110 nós
 echo "Verificando instâncias..."
 for instance in "$INSTANCES_DIR"/*.tsp; do
     [ -f "$instance" ] || continue
     dimension=$(get_dimension "$instance")
-    if [ -n "$dimension" ] && [ "$dimension" -lt 600 ]; then
+    if [ -n "$dimension" ] && [ "$dimension" -lt 110 ]; then
         total=$((total + 1))
     fi
 done
 
-echo "Encontradas $total instâncias com menos de 600 nós"
+echo "Encontradas $total instâncias com menos de 110 nós"
 echo ""
 
 # Processar cada instância
@@ -64,14 +64,14 @@ for instance in "$INSTANCES_DIR"/*.tsp; do
         continue
     fi
     
-    # Processar apenas instâncias com menos de 600 nós
-    if [ "$dimension" -lt 600 ]; then
+    # Processar apenas instâncias com menos de 110 nós
+    if [ "$dimension" -lt 110 ]; then
         count=$((count + 1))
         echo "[$count/$total] Processando $instance_name ($dimension nós)..."
         
         # Executar o programa e capturar a saída
         # A saída do programa é no formato: avg_cost,avg_time_seconds
-        output=$("$EXECUTABLE" "$instance" 0 600)
+        output=$("$EXECUTABLE" "$instance" 0)
         
         # Adicionar o nome da instância na primeira coluna
         echo "$instance_name,$output" >> "$OUTPUT_FILE"

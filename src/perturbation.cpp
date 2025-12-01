@@ -19,41 +19,44 @@ void MLP::double_bridge(Solution &solution) {
 
     
     double delta = 0.0;
+    Subsequence new_sequence;
     
     if (first_r + 1 == second_l) {
-        Subsequence new_sequence = concatenate_subsequences(
+        concatenate_subsequences_inplace(
+            new_sequence,
             solution.subseq_matrix[0][first_l - 1],
             solution.subseq_matrix[second_l][second_r]
         ); 
 
-        new_sequence = concatenate_subsequences(
+        concatenate_subsequences_inplace(
             new_sequence,
             solution.subseq_matrix[first_l][first_r]
         );
 
-        new_sequence = concatenate_subsequences(
+        concatenate_subsequences_inplace(
             new_sequence,
             solution.subseq_matrix[second_r + 1][solution.sequence.size() - 1]
         );
 
         delta = new_sequence.acumulated_cost - solution.objective;
     } else {
-        Subsequence new_sequence = concatenate_subsequences(
+        concatenate_subsequences_inplace(
+            new_sequence,
             solution.subseq_matrix[0][first_l - 1],
             solution.subseq_matrix[second_l][second_r]
         ); 
 
-        new_sequence = concatenate_subsequences(
+        concatenate_subsequences_inplace(
             new_sequence,
             solution.subseq_matrix[first_r + 1][second_l - 1]
         );
 
-        new_sequence = concatenate_subsequences(
+        concatenate_subsequences_inplace(
             new_sequence,
             solution.subseq_matrix[first_l][first_r]
         );
 
-        new_sequence = concatenate_subsequences(
+        concatenate_subsequences_inplace(
             new_sequence,
             solution.subseq_matrix[second_r + 1][solution.sequence.size() - 1]
         );
